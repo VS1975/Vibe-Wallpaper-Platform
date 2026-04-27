@@ -6,8 +6,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     
-    const category = searchParams.get('category') as Category | null
-    const type = searchParams.get('type') as WallpaperType | null
+    const categoryParam = searchParams.get('category')
+    const typeParam = searchParams.get('type')
+    const category = categoryParam && categoryParam !== 'all' ? categoryParam as Category : null
+    const type = typeParam && typeParam !== 'all' ? typeParam as WallpaperType : null
     const search = searchParams.get('search')
     const resolution = searchParams.get('resolution')
     const featured = searchParams.get('featured') === 'true'
@@ -20,11 +22,11 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(limit)
 
-    if (category && category !== 'all') {
+    if (category) {
       query = query.eq('category', category)
     }
 
-    if (type && type !== 'all') {
+    if (type) {
       query = query.eq('type', type)
     }
 
